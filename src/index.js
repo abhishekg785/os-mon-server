@@ -1,23 +1,13 @@
 'use strict'
 
-const os = require('os');
-const prettyMs = require('pretty-ms');
-const prettyBytes = require('pretty-bytes');
+const http       = require('http');
+const getOsStats = require('./getStats');
 
-function getOsStats() {
-	
-	const stats = {
-		cpus: os.cpus(),
-		freeMemory: prettyBytes(os.freemem()),
-		totalMemory: prettyBytes(os.totalmem()),
-		loadavg: os.loadavg(),
-		platform: os.platform(),
-		release: os.release(),
-		type: os.type(),
-		uptime: prettyMs(os.uptime() * 1000)
-	}
-	const statsString = 'OS Stats\n' + JSON.stringify(stats, null, 2);
-	return statsString;
-}
+const server = http.createServer((req, res)=>{
+    let stats = getOsStats();
+    res.end(stats);
+});
 
-console.log(getOsStats());
+server.listen(3000, ()=>{
+    console.log('listening on port 3000');
+});
